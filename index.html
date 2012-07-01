@@ -1,0 +1,36 @@
+<html>
+    <head>
+	</head>
+	<body>
+		<script type="text/javascript" src="webbase-1.0.0.js"></script>
+		<script type="text/javascript">
+			console.log('---------> Webbase.js --------> ', new Date());
+			Webbase.Storage.create('student',{
+				id : 'number',
+				name : 'string',
+				marks : 'number'
+			});
+			
+			Webbase.Storage.insert('student',{
+				id : 5225,
+				name : "Jaison",
+				marks : 53
+			});
+            
+            Webbase.Storage.insert('student',{
+    			id : 5222,
+				name : "Edwin",
+				marks : 43
+			});
+            
+            Webbase.Storage.insert('student',{
+        		id : 5228,
+				name : "joshy",
+				marks : 33
+			});
+            
+            Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find();
+            Webbase.Storage.select('*').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find();
+		</script>
+	</body>
+</html>
