@@ -55,8 +55,15 @@ Webbase.StorageMethod = {
     localStorage : 'localStorage'
 };
 
+/**
+ * Data Structure to keep table details like name and data type of each fields;
+ */
 Webbase.TableDesc = [];
 
+/**
+ * Data Structure to keep the search criteria details like selected fields, source table
+ * and the criteria;
+ */
 Webbase.CriteriaStruct = {
     select : [],
     from : '',
@@ -302,6 +309,14 @@ var DataManager = Webbase.DataManager = (function()	{
 		Webbase.StorageMode.setItem('Webbase_' + tableName, '[]');
 	};
     
+    /**
+     * Method to check the selected fields are same as in the table description;
+     * @method : dataFieldUnMatch;
+     * @access : private;
+     * @param : object tableDesc;
+     * @param : object data;
+     * @return : boolean;
+     */
     Private.dataFieldUnMatch = function(tableDesc, data)  {
         var status = false;
         
@@ -315,6 +330,14 @@ var DataManager = Webbase.DataManager = (function()	{
         return status;
     };
     
+    /**
+     * Method to check the data type of the data inserted; 
+     * @method : dataTypeUnMatch;
+     * @access : private;
+     * @param : object tableDesc;
+     * @param : object data;
+     * @return : boolean;
+     */
     Private.dataTypeUnMatch = function(tableDesc, data) {
         var status = false;
         
@@ -328,16 +351,37 @@ var DataManager = Webbase.DataManager = (function()	{
         return status;
     };
     
+    /**
+     * Method to retrive all the table data from the local storage;
+     * @method : getTableData;
+     * @access : private;
+     * @param : string tableName;
+     * @return : object;
+     */
     Private.getTableData = function(tableName)   {
         return WebbaseUtility.JSON.parse(Webbase.StorageMode.getItem('Webbase_' + tableName));
     };
     
+    /**
+     * Method to save data to the corresponding table in the storage method;
+     * @method : insertData;
+     * @access : private;
+     * @param : string tableName;
+     * @param : object data;
+     */
     Private.insertData = function(tableName, data)  {
         var tableData = Private.getTableData(tableName);
         tableData.push(data);
         Webbase.StorageMode.setItem('Webbase_' + tableName, WebbaseUtility.JSON.stringify(tableData));
     };
     
+    /**
+     * Method to initialize the insert functionality;
+     * @method : initInsert;
+     * @access : private;
+     * @param : string tableName;
+     * @param : object data;
+     */
     Private.initInsert = function(tableName, data) {
         var tableDetails;
         
@@ -352,6 +396,11 @@ var DataManager = Webbase.DataManager = (function()	{
         }
     };
     
+    /**
+     * Method to reset the Criteria data structure;
+     * @method : resetCriteriaStruct;
+     * @access : private;
+     */
     Private.resetCriteriaStruct = function()    {
         Webbase.CriteriaStruct = {
             select : [],
@@ -360,6 +409,14 @@ var DataManager = Webbase.DataManager = (function()	{
         };
     };
     
+    /**
+     * Method to parse the criteria provided by the user and replace the fields in the query;
+     * @method : parseAndPrepareCondition;
+     * @access : private;
+     * @param : string condition;
+     * @param : object tableDesc;
+     * @return : string;
+     */
     Private.parseAndPrepareCondition = function(condition, tableDesc) {
         var token, totalToken, param;
         
@@ -378,10 +435,16 @@ var DataManager = Webbase.DataManager = (function()	{
             }
         }
         
-        return condition;
-        
+        return condition; 
     };
     
+    /**
+     * Method to retrive data from the storage;
+     * @method : dataFieldUnMatch;
+     * @access : private;
+     * @param : object data;
+     * @return : object;
+     */
     Private.find = function(data)   {
         var condition = Webbase.CriteriaStruct.where, tuple, resultData = [], subTuple = {}, selectArray;
         condition = this.parseAndPrepareCondition(condition,this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field);
@@ -401,7 +464,7 @@ var DataManager = Webbase.DataManager = (function()	{
             }
         }
         
-        console.log(resultData);
+        return resultData;
     };
 	
 	/** 
@@ -425,6 +488,13 @@ var DataManager = Webbase.DataManager = (function()	{
 		}
 	};
     
+    /**
+	 * Method to insert data into table;
+	 * @access : public;
+	 * @method : insert;
+	 * @param : string tableName;
+	 * @param : string desc;
+	 */
     DataManager.prototype.insert = function(tableName, data)    {
         try {
             Private.initInsert(tableName, data);
@@ -433,6 +503,13 @@ var DataManager = Webbase.DataManager = (function()	{
         }
     };
     
+    /**
+	 * Method to set select fields to the CriteriaStruct to get data;
+	 * @access : public;
+	 * @method : select;
+	 * @param : string fields;
+	 * @return object;
+	 */
     DataManager.prototype.select = function(fields) {
         var fields = fields.split(',');
         
@@ -446,18 +523,38 @@ var DataManager = Webbase.DataManager = (function()	{
         return this;
     };
     
+    /**
+	 * Method to set table name to the CriteriaStruct to get data;
+	 * @access : public;
+	 * @method : from;
+	 * @param : string tableName;
+	 * @return object;
+	 */
     DataManager.prototype.from = function(tableName)    {
         Webbase.CriteriaStruct.from = tableName;
         
         return this;
     };
     
+    /**
+	 * Method to set search criteria to the CriteriaStruct;
+	 * @access : public;
+	 * @method : where;
+	 * @param : string criteria;
+	 * @return object;
+	 */
     DataManager.prototype.where = function(criteria) {
         Webbase.CriteriaStruct.where = criteria;
         
         return this;
     };
     
+    /**
+	 * Method to initiate search over the data set with respect to the CriteriaStruct;
+	 * @access : public;
+	 * @method : find;
+	 * @return object;
+	 */
     DataManager.prototype.find = function() {
         try {
             if(Webbase.CriteriaStruct.from.length > 0) {
@@ -481,12 +578,32 @@ var DataManager = Webbase.DataManager = (function()	{
 	return DataManager;
 })();
 
+/**
+ * This module provide create, insert and select methods to store data which is inherited 
+ * from DataManager and StorageManager modules;
+ * @module : Storage;
+ * @package : Webbase;
+ * @inherit : DataManager, StorageManager;
+ * @version : 1.0.0;
+ * @return : Object;
+ */
 var Storage = Webbase.Storage = (function()	{
+
+	/**
+	 * Storage Constructor;
+	 */
 	var Storage = function()	{
 		this.identifyStorage();
 	};
 	
+	/**
+	 * Inherting DataManager;
+	 */
 	Storage = WebbaseUtility.ObjectExt.inherit(DataManager, Storage);
+
+	/**
+	 * Inherting StorageManager;
+	 */
 	Storage = WebbaseUtility.ObjectExt.inherit(StorageManager, Storage);
 	
 	return new Storage();
