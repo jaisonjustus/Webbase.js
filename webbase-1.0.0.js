@@ -567,6 +567,7 @@ var DataManager = Webbase.DataManager = (function()	{
                 var result = Private.find(tableData);
                 
                 Private.resetCriteriaStruct();
+
                 return result;
             }else   {
                 Private.resetCriteriaStruct();
