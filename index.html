@@ -1,10 +1,127 @@
 <html>
     <head>
+    	<style>
+
+    		fieldset	{
+    			margin: 0;
+    			padding: 0;
+    			border: 0;
+    			background-color: #abbbbb;
+    		}
+
+    		#user-form {
+    			width: 300px;
+    			height: auto;
+    			padding: 10px 10px 10px 10px;
+    		}
+
+    		#user-form label	{
+    			width:70px;
+    			font: 15px Arial;
+    		}
+
+    		#user-form input[type=text]	{
+    			width:180px;
+    			float: right;
+    		}
+
+    		#user-form input[type=button]	{
+    			width: 70px;
+    			height: 50px;
+    			float:right;
+    		}
+
+    		/*#user-form select	{
+    			float:right;
+    		}*/
+
+    		#user-form ul	{
+    			list-style: none;
+    			padding: 0px 0px 10px 0px;
+    		}
+
+    		#user-form li 	{
+    			margin: 10px 0px 0px 0px;
+    		}
+    	</style>
 	</head>
 	<body>
+		<fieldset id="user-form">
+			<ul>
+				<li>
+					<input type="button" id="search" name="search" value="Search"/>
+					<select id="mark-criteria">
+						<option value="30">30</option>
+						<option value="40">40</option>
+						<option value="50">50</option>
+						<option value="60">60</option>
+						<option value="70">70</option>
+						<option value="80">80</option>
+						<option value="90">90</option>
+					</select>
+				</li>
+				<li></li>
+				<li>
+					<label for="id"> Roll no  </label>
+					<input type="text" id="id" name="id"/>
+				</li>
+				<li>
+					<label for="name"> Name  </label>
+					<input type="text" id="name" name="name"/>
+				</li>
+				<li>
+					<label for="mark"> Mark  </label>
+					<input type="text" id="mark" name="mark"/>
+				</li>
+				<li>
+					<input type="button" id="add" name="add" value="Add"/>
+				</li>
+			</ul>
+		</fieldset>
+
+		<table id="data-view" border="1">
+			<thead>
+				<td>Id</td>
+				<td>Name</td>
+				<td>Mark</td>
+			</thead>
+		</table>
+
+		<table id="search-view">
+		</table>
+
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="webbase-1.0.0.js"></script>
 		<script type="text/javascript">
-			console.log('---------> Webbase.js --------> ', new Date());
+			$(document).ready(function()	{
+				Webbase.Storage.create('student',{
+					id : 'number',
+					name : 'string',
+					marks : 'number'
+				});
+
+				$('#add').live('click', function()	{
+					Webbase.Storage.insert('student',{
+						id : parseInt($('#id').val()),
+						name : $('#name').val(),
+						marks : parseInt($('#mark').val())
+					});
+
+					$('#data-view').append("<tr><td>"+parseInt($('#id').val())+"</td><td>"+$('#name').val()+"</td><td>"+parseInt($('#mark').val())+"</td></tr>");
+				});
+
+				$("#search").live('click', function()	{
+					var data = Webbase.Storage.select('name').from('student').where('{marks} > ' + $("#mark-criteria :selected").val()).find();
+					$("#search-view").html('');
+					$("#search-view").append("<thead><td>Name<td></thead>")
+					for(var i = 0; i <= data.length; i++)	{
+						$("#search-view").append("<tr><td>"+data[i].name+"</td></tr>")
+					}
+				});
+			});
+			
+			/*console.log('---------> Webbase.js --------> ', new Date());
+
 			Webbase.Storage.create('student',{
 				id : 'number',
 				name : 'string',
@@ -30,7 +147,7 @@
 			});
             
             console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
-            console.log(Webbase.Storage.select('*').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
+            console.log(Webbase.Storage.select('*').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());*/
 		</script>
 	</body>
 </html>
