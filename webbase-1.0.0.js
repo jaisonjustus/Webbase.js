@@ -563,7 +563,6 @@ var DataManager = Webbase.DataManager = (function()	{
                 }
                 
                 var tableData = Private.getTableData(Webbase.CriteriaStruct.from);
-                Private.find(tableData);
                 var result = Private.find(tableData);
                 
                 Private.resetCriteriaStruct();
