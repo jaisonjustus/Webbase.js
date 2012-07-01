@@ -564,8 +564,10 @@ var DataManager = Webbase.DataManager = (function()	{
                 
                 var tableData = Private.getTableData(Webbase.CriteriaStruct.from);
                 Private.find(tableData);
+                var result = Private.find(tableData);
                 
                 Private.resetCriteriaStruct();
+                return result;
             }else   {
                 Private.resetCriteriaStruct();
                 throw new Webbase.Exception('CRT01');

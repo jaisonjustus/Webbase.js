@@ -31,6 +31,8 @@
             
             Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find();
             Webbase.Storage.select('*').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find();
+            console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
+            console.log(Webbase.Storage.select('*').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
 		</script>
 	</body>
 </html>
