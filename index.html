@@ -90,10 +90,10 @@
 		<table id="search-view">
 		</table>
 
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->
 		<script type="text/javascript" src="webbase-1.0.0.js"></script>
 		<script type="text/javascript">
-			$(document).ready(function()	{
+			/*$(document).ready(function()	{
 				Webbase.Storage.create('student',{
 					id : 'number',
 					name : 'string',
@@ -118,9 +118,9 @@
 						$("#search-view").append("<tr><td>"+data[i].name+"</td></tr>")
 					}
 				});
-			});
+			});*/
 			
-			/*console.log('---------> Webbase.js --------> ', new Date());
+			console.log('---------> Webbase.js --------> ', new Date());
 
 			Webbase.Storage.create('student',{
 				id : 'number',
@@ -146,8 +146,11 @@
 				marks : 33
 			});
             
-            console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
-            console.log(Webbase.Storage.select('*').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());*/
+            console.log(Webbase.Storage.select('*').from('student').find());
+            //Webbase.Storage.from('student').where("{id} == 5225").delete();
+            Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
+            //console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
+            console.log(Webbase.Storage.select('*').from('student').find());
 		</script>
 	</body>
 </html>

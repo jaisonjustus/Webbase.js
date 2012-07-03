@@ -67,7 +67,8 @@ Webbase.TableDesc = [];
 Webbase.CriteriaStruct = {
     select : [],
     from : '',
-    where : ''
+    where : '',
+    set : ''
 };
 
 /**
@@ -228,7 +229,9 @@ var DataManager = Webbase.DataManager = (function()	{
         resetCriteriaStruct : function()    {},
         getTableData : function(tableName)  {},
         find : function(data)   {},
-        parseAndPrepareCondition : function()   {}
+        parseAndPrepareCondition : function()   {},
+        delete : function()	{},
+        update : function()	{}
 	};
 	
 	/**
@@ -405,7 +408,8 @@ var DataManager = Webbase.DataManager = (function()	{
         Webbase.CriteriaStruct = {
             select : [],
             from : '',
-            where : ''
+            where : '',
+            set : ''
         };
     };
     
@@ -447,7 +451,13 @@ var DataManager = Webbase.DataManager = (function()	{
      */
     Private.find = function(data)   {
         var condition = Webbase.CriteriaStruct.where, tuple, resultData = [], subTuple = {}, selectArray;
-        condition = this.parseAndPrepareCondition(condition,this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field);
+        
+        if(condition.length > 0)	{
+        	condition = this.parseAndPrepareCondition(condition,this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field);
+    	}else	{
+    		condition = '1 == 1'
+    	}
+
         for(var i = 0; i < data.length; i++)    {
             tuple = data[i];
             if(eval(condition)) {
@@ -466,7 +476,47 @@ var DataManager = Webbase.DataManager = (function()	{
         
         return resultData;
     };
+
+    Private.updateData = function(tableName, data)  {
+        /*var tableData = Private.getTableData(tableName);
+        tableData.push(data);*/
+        Webbase.StorageMode.setItem('Webbase_' + tableName, WebbaseUtility.JSON.stringify(data));
+    };
 	
+	Private.delete = function(data)	{
+		var condition, tuple, resultData = [];
+		condition = Webbase.CriteriaStruct.where;
+		condition = this.parseAndPrepareCondition(condition,this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field);
+		for(var i = 0; i < data.length; i++)	{
+			tuple = data[i];
+			if(eval(condition))	{
+				
+			}else	{
+				resultData.push(tuple);
+			}
+		}
+
+		this.updateData(Webbase.CriteriaStruct.from, resultData);
+	};
+
+	Private.update = function(data)	{
+		var condition, tuple, resultData = [], setData = Webbase.CriteriaStruct.set;
+		condition = Webbase.CriteriaStruct.where;
+		condition = this.parseAndPrepareCondition(condition,this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field);
+		for(var i = 0; i < data.length; i++)	{
+			tuple = data[i];
+			if(eval(condition))	{
+				for(var key in setData)	{
+					tuple[key] = setData[key];
+				}	
+			}
+
+			resultData.push(tuple);
+		}
+
+		this.updateData(Webbase.CriteriaStruct.from, resultData);
+	};
+
 	/** 
 	 * DataManager Constructor;
 	 */
@@ -548,6 +598,12 @@ var DataManager = Webbase.DataManager = (function()	{
         
         return this;
     };
+
+    DataManager.prototype.set = function(setData)	{
+    	Webbase.CriteriaStruct.set = setData;
+
+    	return this;
+    };
     
     /**
 	 * Method to initiate search over the data set with respect to the CriteriaStruct;
@@ -575,6 +631,34 @@ var DataManager = Webbase.DataManager = (function()	{
         }catch(error)   {
             console.log(error.message());
         }
+    };
+
+    DataManager.prototype.delete = function()	{
+    	try{
+    		if(Webbase.CriteriaStruct.from.length > 0)	{
+    			Private.delete(Private.getTableData(Webbase.CriteriaStruct.from));
+    			Private.resetCriteriaStruct();
+    		}else	{
+    			Private.resetCriteriaStruct();
+    			throw new Webbase.Exception('CRT01');
+    		}
+    	}catch(error)	{
+    		console.log(error.message());
+    	}
+    };
+
+    DataManager.prototype.update = function()	{
+    	try{
+    		if(Webbase.CriteriaStruct.from.length > 0)	{
+    			Private.update(Private.getTableData(Webbase.CriteriaStruct.from));
+    			Private.resetCriteriaStruct();
+    		}else	{
+    			Private.resetCriteriaStruct();
+    			throw new Webbase.Exception('CRT01');
+    		}
+    	}catch(error)	{
+    		console.log(error.message());
+    	}
     };
 	
 	return DataManager;
