@@ -3,6 +3,9 @@ Webbase.js
 
 Webbase.js is a data manager library, which provide the concept of creating tables in the storage method provided by the browser.
 
+` ---- Incomplete ---- `
+
+
 Example
 -------
 
