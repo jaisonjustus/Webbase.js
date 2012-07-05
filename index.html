@@ -121,17 +121,36 @@
 			});*/
 			
 			console.log('---------> Webbase.js --------> ', new Date());
+			Webbase.Storage.debug(true);
 
 			Webbase.Storage.create('student',{
 				id : 'number',
 				name : 'string',
 				marks : 'number'
-			});
+			},'id');
+
+			Webbase.Storage.create('marks',{
+				id : 'number',
+				english : 'number',
+				maths : 'number'
+			},'id');
 			
 			Webbase.Storage.insert('student',{
 				id : 5225,
 				name : "Jaison",
 				marks : 53
+			});
+
+			Webbase.Storage.insert('student',{
+				id : 5225,
+				name : "Jaison",
+				marks : 53
+			});
+
+			Webbase.Storage.insert('marks',{
+				id: 5225,
+				english : 40,
+				maths : 30
 			});
             
             Webbase.Storage.insert('student',{
@@ -139,18 +158,30 @@
 				name : "Edwin",
 				marks : 43
 			});
+
+			Webbase.Storage.insert('marks',{
+				id: 5222,
+				english : 50,
+				maths : 40
+			});
             
             Webbase.Storage.insert('student',{
         		id : 5228,
 				name : "joshy",
 				marks : 33
 			});
+
+			Webbase.Storage.insert('marks',{
+				id: 5228,
+				english : 60,
+				maths : 50
+			});
             
             console.log(Webbase.Storage.select('*').from('student').find());
             //Webbase.Storage.from('student').where("{id} == 5225").delete();
             Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
             //console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
-            console.log(Webbase.Storage.select('*').from('student').find());
+            console.log(Webbase.Storage.select('*').from('marks').find());
 		</script>
 	</body>
 </html>

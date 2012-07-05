@@ -11,7 +11,8 @@
 var Webbase = {
     Version : '1.0.0',
     Browser : window,
-    StorageMode : ''
+    StorageMode : '',
+    debug : false
 };
 
 /**
@@ -31,7 +32,8 @@ var Exception = Webbase.Exception = (function()    {
 			STR02 : "TABLE ALREADY EXIST'S.",
             STR03 : "TABLE NOT FOUND.",
             STR04 : "INCORRECT FIELD NAME OR DATA TYPE.",
-            
+            STR05 : "PRIMARY KEY FIELD NOT FOUND IN THE TABLE DECRIPTION",
+            STR06 : "PRIMARY KEY VIOLATION : DUPLICATE DATA FOUND",
             CRT01 : "TABLE NOT SELECTED!!"
 		};
 		
@@ -136,6 +138,32 @@ var ObjectExt = WebbaseUtility.ObjectExt = (function()	{
 
 })();
 
+var Log = WebbaseUtility.Log = (function()	{
+	var Log = function()	{
+		
+		this.consoleMode = true;
+
+		if(typeof console === 'undefined' || typeof console.log === 'undefined')	{
+			this.consoleMode = false;
+		}
+	};
+
+	Log.prototype.show = function(message)	{
+		if(Webbase.debug)	{
+			if(typeof message == 'object' && typeof message.length == 'undefined' && !this.consoleMode)	{
+				WebbaseUtility.JSON.stringify(message);
+			}
+			if(this.consoleMode)	{
+				console.log(message);
+			}else	{
+				alert(message);
+			}
+		}
+	};
+
+	return new Log();
+})();
+
 /**
  * This module manage the storage mode. this module provide support for selecting
  * the storage medium like localstorage, globalstorage etc;
@@ -193,7 +221,7 @@ var StorageManager = Webbase.StorageManager = (function()   {
 				throw new Webbase.Exception('STR01');
 			}
 		}catch(err)	{
-			console.log(err.message());
+			WebbaseUtility.Log.show(err.message());
 			return false;
 		}
 	};
@@ -231,7 +259,8 @@ var DataManager = Webbase.DataManager = (function()	{
         find : function(data)   {},
         parseAndPrepareCondition : function()   {},
         delete : function()	{},
-        update : function()	{}
+        update : function()	{},
+        primaryKeyMatch : function()	{}
 	};
 	
 	/**
@@ -240,15 +269,15 @@ var DataManager = Webbase.DataManager = (function()	{
 	 * @method : create;
 	 * @access : private;
 	 */
-	Private.initCreate = function(tableName,desc)	{
+	Private.initCreate = function(tableName,desc,primaryKey)	{
 		if(Webbase.StorageMode)	{
 			this.getTableDetails();
-				if(!this.checkTableAlreadyExists(tableName))	{
-					this.setTableDetails(tableName,desc);
-					this.createTable(tableName);
-				}else	{
-					throw new Webbase.Exception('STR02');
-				}
+			if(!this.checkTableAlreadyExists(tableName))	{
+				this.setTableDetails(tableName,desc,primaryKey);
+				this.createTable(tableName);
+			}else	{
+				throw new Webbase.Exception('STR02');
+			}
 		}else	{
 			throw new Webbase.Exception('STR01');
 		}
@@ -260,12 +289,16 @@ var DataManager = Webbase.DataManager = (function()	{
 	 * @access : private;
 	 */
 	Private.setTableDetails = function(tableName, desc, primaryKey)	{
-		Webbase.TableDesc.push({
-			name : tableName,
-			field : desc,
-			primaryKey : primaryKey
-		});
-		Webbase.StorageMode.setItem('Webbase_tbl', WebbaseUtility.JSON.stringify(Webbase.TableDesc));
+		if(desc.hasOwnProperty(primaryKey) || primaryKey == '')	{
+			Webbase.TableDesc.push({
+				name : tableName,
+				field : desc,
+				primaryKey : primaryKey
+			});
+			Webbase.StorageMode.setItem('Webbase_tbl', WebbaseUtility.JSON.stringify(Webbase.TableDesc));
+		}else	{
+			throw new Webbase.Exception('STR05');
+		}
 	};
     
     /**
@@ -377,6 +410,18 @@ var DataManager = Webbase.DataManager = (function()	{
         tableData.push(data);
         Webbase.StorageMode.setItem('Webbase_' + tableName, WebbaseUtility.JSON.stringify(tableData));
     };
+
+    Private.primaryKeyMatch = function(tableName, primaryKey, data)	{
+    	var tableData = this.getTableData(tableName), status = false;
+
+    	for(var i = 0; i < tableData.length; i++)	{
+    		if(tableData[i][primaryKey] == data[primaryKey])	{
+    			status = true;
+    		}
+    	}
+
+    	return status;
+    }
     
     /**
      * Method to initialize the insert functionality;
@@ -389,8 +434,12 @@ var DataManager = Webbase.DataManager = (function()	{
         var tableDetails;
         
         if(tableDetails = this.checkTableAlreadyExists(tableName))   {
-            if(!this.dataFieldUnMatch(tableDetails.field, data) && !this.dataTypeUnMatch(tableDetails.field, data))  {
-                this.insertData(tableName, data);
+            if(!this.dataFieldUnMatch(tableDetails.field, data) && !this.dataTypeUnMatch(tableDetails.field, data))	{
+            	if(!this.primaryKeyMatch(tableName, tableDetails.primaryKey, data))  {
+                	this.insertData(tableName, data);
+            	}else	{
+            		throw new Webbase.Exception('STR06');	
+            	}
             }else   {
                 throw new Webbase.Exception('STR04');
             }
@@ -478,8 +527,6 @@ var DataManager = Webbase.DataManager = (function()	{
     };
 
     Private.updateData = function(tableName, data)  {
-        /*var tableData = Private.getTableData(tableName);
-        tableData.push(data);*/
         Webbase.StorageMode.setItem('Webbase_' + tableName, WebbaseUtility.JSON.stringify(data));
     };
 	
@@ -489,9 +536,7 @@ var DataManager = Webbase.DataManager = (function()	{
 		condition = this.parseAndPrepareCondition(condition,this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field);
 		for(var i = 0; i < data.length; i++)	{
 			tuple = data[i];
-			if(eval(condition))	{
-				
-			}else	{
+			if(eval(condition) == false)	{
 				resultData.push(tuple);
 			}
 		}
@@ -530,11 +575,15 @@ var DataManager = Webbase.DataManager = (function()	{
 	 * @param : string tableName;
 	 * @param : string desc;
 	 */
-	DataManager.prototype.create = function(tableName, desc)	{
+	DataManager.prototype.create = function(tableName, desc, primaryKey)	{
+		if(!primaryKey)	{
+			primaryKey = '';
+		}
+
 		try	{
-			Private.initCreate(tableName, desc);
+			Private.initCreate(tableName, desc, primaryKey);
 		}catch(err)	{
-			console.log(err.message());
+			WebbaseUtility.Log.show(err.message());
 		}
 	};
     
@@ -549,7 +598,7 @@ var DataManager = Webbase.DataManager = (function()	{
         try {
             Private.initInsert(tableName, data);
         }catch(error)    {
-            console.log(error.message());
+            WebbaseUtility.Log.show(error.message());
         }
     };
     
@@ -612,30 +661,32 @@ var DataManager = Webbase.DataManager = (function()	{
 	 * @return object;
 	 */
     DataManager.prototype.find = function() {
+    	var result = false;
         try {
-            if(Webbase.CriteriaStruct.from.length > 0) {
+            if(Webbase.CriteriaStruct.from.length > 0 && Private.checkTableAlreadyExists(Webbase.CriteriaStruct.from)) {
                 if(Webbase.CriteriaStruct.select.length <= 0)   {
                     Webbase.CriteriaStruct.select = ['*'];    
                 }
                 
                 var tableData = Private.getTableData(Webbase.CriteriaStruct.from);
-                var result = Private.find(tableData);
+                result = Private.find(tableData);
                 
                 Private.resetCriteriaStruct();
 
-                return result;
             }else   {
                 Private.resetCriteriaStruct();
                 throw new Webbase.Exception('CRT01');
             }        
         }catch(error)   {
-            console.log(error.message());
+            WebbaseUtility.Log.show(error.message());
+        }finally	{
+        	return result;
         }
     };
 
     DataManager.prototype.delete = function()	{
     	try{
-    		if(Webbase.CriteriaStruct.from.length > 0)	{
+    		if(Webbase.CriteriaStruct.from.length > 0 && Private.checkTableAlreadyExists(Webbase.CriteriaStruct.from))	{
     			Private.delete(Private.getTableData(Webbase.CriteriaStruct.from));
     			Private.resetCriteriaStruct();
     		}else	{
@@ -643,13 +694,13 @@ var DataManager = Webbase.DataManager = (function()	{
     			throw new Webbase.Exception('CRT01');
     		}
     	}catch(error)	{
-    		console.log(error.message());
+    		WebbaseUtility.Log.show(error.message());
     	}
     };
 
     DataManager.prototype.update = function()	{
     	try{
-    		if(Webbase.CriteriaStruct.from.length > 0)	{
+    		if(Webbase.CriteriaStruct.from.length > 0 && Private.checkTableAlreadyExists(Webbase.CriteriaStruct.from))	{
     			Private.update(Private.getTableData(Webbase.CriteriaStruct.from));
     			Private.resetCriteriaStruct();
     		}else	{
@@ -657,7 +708,7 @@ var DataManager = Webbase.DataManager = (function()	{
     			throw new Webbase.Exception('CRT01');
     		}
     	}catch(error)	{
-    		console.log(error.message());
+    		WebbaseUtility.Log.show(error.message());
     	}
     };
 	
@@ -692,5 +743,9 @@ var Storage = Webbase.Storage = (function()	{
 	 */
 	Storage = WebbaseUtility.ObjectExt.inherit(StorageManager, Storage);
 	
+	Storage.prototype.debug = function(mode)	{
+		Webbase.debug = mode;
+	};
+
 	return new Storage();
 })();
