@@ -9,7 +9,8 @@ Webbase.js is a data manager library, which provide the concept of creating tabl
 Example
 -------
 
-* Method to create a table. `Webbase.Storage.create(table_name, data);`
+* Method to create a table.
+ `Webbase.Storage.create(table_name, data, primary_key);`
 
 	
     Webbase.Storage.create('student',{
