@@ -70,7 +70,8 @@ Webbase.CriteriaStruct = {
     select : [],
     from : '',
     where : '',
-    set : ''
+    set : '',
+    join : ''
 };
 
 /**
@@ -136,6 +137,27 @@ var ObjectExt = WebbaseUtility.ObjectExt = (function()	{
 	
 	return new ObjectExt();
 
+})();
+
+var Sort = WebbaseUtility.Sort = (function()	{
+	var Sort = function()	{};
+
+	Sort.prototype.Normal = function(data, key)	{
+		for (var i = 0; i < data.length; i++) {
+			var currVal = data[i][key];
+			var currElem = data[i];
+			var j = i - 1;
+			while ((j >= 0) && (data[j][key] > currVal)) {
+				data[j + 1] = data[j];
+				j--;
+			}
+			data[j + 1] = currElem;
+		}
+		
+		return data;
+	};
+
+	return new Sort();
 })();
 
 var Log = WebbaseUtility.Log = (function()	{
@@ -260,7 +282,11 @@ var DataManager = Webbase.DataManager = (function()	{
         parseAndPrepareCondition : function()   {},
         delete : function()	{},
         update : function()	{},
-        primaryKeyMatch : function()	{}
+        primaryKeyMatch : function()	{},
+        mergeRecords : function()	{},
+        getPrimaryKey : function()	{},
+        createMergedTableDesc : function()	{},
+        cleanData : function(objArray)	{}
 	};
 	
 	/**
@@ -412,13 +438,18 @@ var DataManager = Webbase.DataManager = (function()	{
     };
 
     Private.primaryKeyMatch = function(tableName, primaryKey, data)	{
-    	var tableData = this.getTableData(tableName), status = false;
 
-    	for(var i = 0; i < tableData.length; i++)	{
-    		if(tableData[i][primaryKey] == data[primaryKey])	{
-    			status = true;
-    		}
-    	}
+    	var tableData, status = false;
+
+    	if(primaryKey != '')	{
+    		tableData = this.getTableData(tableName);
+
+	    	for(var i = 0; i < tableData.length; i++)	{
+	    		if(tableData[i][primaryKey] == data[primaryKey])	{
+	    			status = true;
+	    		}
+	    	}
+	    }
 
     	return status;
     }
@@ -458,7 +489,8 @@ var DataManager = Webbase.DataManager = (function()	{
             select : [],
             from : '',
             where : '',
-            set : ''
+            set : '',
+            join : ''
         };
     };
     
@@ -476,7 +508,7 @@ var DataManager = Webbase.DataManager = (function()	{
         totalToken = condition.match(/{\w+}/g).length;
         
         for(var i = 0; i < totalToken; i++) {
-            token = condition.match(/{\w+}/);
+            token = condition.match(/{(\w)+}/);
             if(token.length > 0)    {
                 param = token[0].replace('{','').replace('}','');
                 if(tableDesc.hasOwnProperty(param)) {
@@ -490,6 +522,34 @@ var DataManager = Webbase.DataManager = (function()	{
         
         return condition; 
     };
+
+    Private.createMergedTableDesc = function()	{
+    	var tables, desc = {}, temp;
+
+    	tables = Webbase.CriteriaStruct.join.split('.');
+    	this.getTableDetails();
+
+    	for(j = (tables.length - 1); j >= 0; j--)	{
+
+    		for(var i = 0; i < Webbase.TableDesc.length; i++)	{
+	    		if(Webbase.TableDesc[i].name == tables[j])	{
+	    			temp = Webbase.TableDesc[i];
+	    		}
+	    	}
+
+    		if(j != 0)	{
+    			for(var attr in temp.field)	{
+    				desc[tables[j] + '_' + attr] = temp.field[attr];
+    			}
+    		}else	{
+    			for(var attr in temp.field)	{
+    				desc[attr] = temp.field[attr];
+    			}
+    		}
+    	}
+
+    	return desc;
+    };
     
     /**
      * Method to retrive data from the storage;
@@ -499,16 +559,19 @@ var DataManager = Webbase.DataManager = (function()	{
      * @return : object;
      */
     Private.find = function(data)   {
-        var condition = Webbase.CriteriaStruct.where, tuple, resultData = [], subTuple = {}, selectArray;
-        
+        var condition = Webbase.CriteriaStruct.where, tuple, resultData = [], subTuple = {}, selectArray, fields = [];
+
+        fields = this.createMergedTableDesc();
+
         if(condition.length > 0)	{
-        	condition = this.parseAndPrepareCondition(condition,this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field);
+        	condition = this.parseAndPrepareCondition(condition, fields);
     	}else	{
     		condition = '1 == 1'
     	}
 
         for(var i = 0; i < data.length; i++)    {
             tuple = data[i];
+            //console.log(data, tuple, condition, eval(condition));
             if(eval(condition)) {
                 subTuple = {};
                 selectArray = Webbase.CriteriaStruct.select;
@@ -560,6 +623,83 @@ var DataManager = Webbase.DataManager = (function()	{
 		}
 
 		this.updateData(Webbase.CriteriaStruct.from, resultData);
+	};
+
+	//child data to parent and return new parent obj
+	Private.mergeRecords = function(child, parent, childTableName, previousTableName, key)	{
+		var result = [], tempChild, start, end, pivot, tempObj, prefix;
+		child = WebbaseUtility.Sort.Normal(child, 'id');
+		parent = WebbaseUtility.Sort.Normal(parent, 'id');
+		for(var i = 0; i < parent.length; i++)	{
+			tempChild = child;
+			start = 0; end = (tempChild.length - 1);
+			while(start != end)	{
+				pivot = Math.floor((end - start) / 2);
+				if(pivot <= 0)	{
+					for(var j = 0; j < tempChild.length; j++)	{
+						if(tempChild[j][key] == parent[i][key])	{
+							tempObj = parent[i];
+							for(var attr in tempChild[j])	{
+								if(attr.match(/^\$/) != null)	{
+									tempObj[attr] = tempChild[pivot][attr];	
+								}else	{
+									tempObj[childTableName + '_' + attr] = tempChild[pivot][attr];
+								}
+							}
+							result.push(tempObj);
+							start = end = 0;
+						}
+					}
+					start = end = 0;
+				}else	{
+					if(parent[i][key] < tempChild[pivot][key])	{
+						tempChild = tempChild.slice(start, pivot + 1);
+						start = 0; end = (tempChild.length - 1);
+					}else if(parent[i][key] > tempChild[pivot][key])	{
+						tempChild = tempChild.slice(pivot, end + 1);
+						start = 0; end = (tempChild.length - 1);
+					}else if(parent[i][key] == tempChild[pivot][key])	{
+						tempObj = parent[i];
+						for(var attr in tempChild[pivot])	{
+							if(attr.match(/^\$/) != null)	{
+								tempObj[attr] = tempChild[pivot][attr];	
+							}else	{
+								tempObj[childTableName + '_' + attr] = tempChild[pivot][attr];
+							}
+						}
+						
+						result.push(tempObj);
+						start = end = 0;
+					}
+				}
+			}
+		}
+
+		return result;
+	};
+
+	Private.cleanData = function(objArray)	{
+		for(var i = 0; i < objArray.length; i++)	{
+			for(var attr in objArray[i])	{
+				if(attr.match(/^\$/) != null)	{
+					objArray[i][attr.replace('$','')] = objArray[i][attr];
+				}
+			}
+		}
+
+		return objArray;
+	};
+
+	Private.getPrimaryKey = function(tableName)	{
+		var primaryKey = '';
+
+		for(var i = 0; i < Webbase.TableDesc.length; i++)	{
+			if(Webbase.TableDesc[i].name == tableName)	{
+				primaryKey = Webbase.TableDesc[i].primaryKey;
+			}
+		}
+
+		return primaryKey;
 	};
 
 	/** 
@@ -663,21 +803,45 @@ var DataManager = Webbase.DataManager = (function()	{
     DataManager.prototype.find = function() {
     	var result = false;
         try {
-            if(Webbase.CriteriaStruct.from.length > 0 && Private.checkTableAlreadyExists(Webbase.CriteriaStruct.from)) {
-                if(Webbase.CriteriaStruct.select.length <= 0)   {
-                    Webbase.CriteriaStruct.select = ['*'];    
-                }
-                
-                var tableData = Private.getTableData(Webbase.CriteriaStruct.from);
-                result = Private.find(tableData);
-                
-                Private.resetCriteriaStruct();
+        	if(Webbase.CriteriaStruct.join.length > 0)	{
+	            var tables, primaryKey;
 
-            }else   {
-                Private.resetCriteriaStruct();
-                throw new Webbase.Exception('CRT01');
-            }        
+	            tables = Webbase.CriteriaStruct.join.split('.');
+	            
+	            for(var index = 0; index < tables.length; index++)	{
+	            	tables[index] = '$' + tables[index];
+	            }
+
+	            primaryKey = Private.getPrimaryKey(tables[0].replace('$',''));
+	            child = Private.getTableData(tables[tables.length - 1].replace('$',''));
+
+	            for(j = (tables.length - 1), k = (tables.length - 2); j >= 1, k >= 0; j--, k--)	{
+	            	parent = Private.getTableData(tables[k].replace('$',''));
+	            	child = Private.mergeRecords(child, parent, tables[k + 1], (k == (tables.length - 2)) ? '' : tables[k + 2], primaryKey);
+	            }
+
+	            child = Private.cleanData(child);
+
+	            result = Private.find(child);
+	                
+	            Private.resetCriteriaStruct();
+            }else	{
+				if(Webbase.CriteriaStruct.from.length > 0 && Private.checkTableAlreadyExists(Webbase.CriteriaStruct.from)) {
+	                if(Webbase.CriteriaStruct.select.length <= 0)   {
+	                    Webbase.CriteriaStruct.select = ['*'];    
+	                }
+	                
+	                var tableData = Private.getTableData(Webbase.CriteriaStruct.from);
+	                result = Private.find(tableData);
+	                
+	                Private.resetCriteriaStruct();
+	            }else   {
+	                Private.resetCriteriaStruct();
+	                throw new Webbase.Exception('CRT01');
+	            }
+            }    
         }catch(error)   {
+        	console.log(error);
             WebbaseUtility.Log.show(error.message());
         }finally	{
         	return result;
@@ -710,6 +874,12 @@ var DataManager = Webbase.DataManager = (function()	{
     	}catch(error)	{
     		WebbaseUtility.Log.show(error.message());
     	}
+    };
+
+    DataManager.prototype.join = function(tables)	{
+    	Webbase.CriteriaStruct.join = tables;
+
+    	return this;
     };
 	
 	return DataManager;
