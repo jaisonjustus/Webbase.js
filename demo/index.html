@@ -91,7 +91,7 @@
 		</table>
 
 		<!-- <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> -->
-		<script type="text/javascript" src="webbase-1.0.0.js"></script>
+		<script type="text/javascript" src="../webbase-1.0.0.js"></script>
 		<script type="text/javascript">
 			/*$(document).ready(function()	{
 				Webbase.Storage.create('student',{
@@ -135,11 +135,34 @@
 				maths : 'number'
 			},'id');
 			
-			Webbase.Storage.insert('student',{
+			Webbase.Storage.create('extra',{
+				id : 'number',
+				extra : 'number'
+			},'id');
+
+			Webbase.Storage.create('tbl_details',{
+				id: 'number',
+				detail : 'string'
+			},'id');
+
+<!-- // -->
+
+			Webbase.Storage.insert('tbl_details',{
 				id : 5225,
-				name : "Jaison",
-				marks : 53
+				detail : "JJ"
 			});
+
+			Webbase.Storage.insert('tbl_details',{
+				id : 5222,
+				detail : "ED"
+			});
+
+			Webbase.Storage.insert('tbl_details',{
+				id : 5228,
+				detail : "JH"
+			});
+
+
 
 			Webbase.Storage.insert('student',{
 				id : 5225,
@@ -176,12 +199,28 @@
 				english : 60,
 				maths : 50
 			});
+
+			Webbase.Storage.insert('extra',{
+				id: 5228,
+				extra : 101
+			});
+			Webbase.Storage.insert('extra',{
+				id: 5222,
+				extra : 102
+			});
+			Webbase.Storage.insert('extra',{
+				id: 5225,
+				extra : 103
+			});
             
-            console.log(Webbase.Storage.select('*').from('student').find());
+            //console.log(Webbase.Storage.select('*').from('student').find());
             //Webbase.Storage.from('student').where("{id} == 5225").delete();
-            Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
+            //Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
             //console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
-            console.log(Webbase.Storage.select('*').from('marks').find());
+			//console.log(Webbase.Storage.select('*').from('student').find());
+
+            console.log(Webbase.Storage.select('name,marks,marks_english,marks_maths,extra_extra,tbl_details_detail').join('student.marks.extra.tbl_details').where('{marks} > 40 && {marks} < 60').find());
+            //console.log(Webbase.Storage.select('*').from('marks').find());
 		</script>
 	</body>
 </html>
