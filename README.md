@@ -3,9 +3,9 @@ Webbase.js
 
 Webbase.js is a data manager library for javascript web applications, which provide the concept of creating 
 tables in the storage method (localStorage) provided by the browser. its just like mimicing the database to the browser.
-Basic operations that webbase support are <b>" insert, delete, update, select, select..where and join. "</b>
+Basic operations that webbase support are " insert, delete, update, select, select..where and join. "
 
-* Method to create a table. table name and data is madatory,  primary key which is not mandatory.<br/>
+* <b>Method to create a table. table name and data is madatory,  primary key which is not mandatory.</b><br/>
     
     ```Javascript
     Webbase.Storage.create(table_name, data, primary_key);
@@ -20,7 +20,7 @@ Basic operations that webbase support are <b>" insert, delete, update, select, s
     ```
 
 
-* Method to insert record to the table.<br/>
+* <b>Method to insert record to the table.</b><br/>
 
     ```Javascript
     Webbase.Storage.insert(table_name, data);
@@ -34,7 +34,7 @@ Basic operations that webbase support are <b>" insert, delete, update, select, s
     });
     ```
 
-* Method to delete record from the table. <br/>
+* <b>Method to delete record from the table.</b><br/>
 
     ```Javascript
     Webbase.Storage.from(table_name).where(condition).delete();
@@ -44,7 +44,7 @@ Basic operations that webbase support are <b>" insert, delete, update, select, s
     Webbase.Storage.from('student').where('{id} == 5225').delete();
     ```
 
-* Method to update record in the table.<br/>
+* <b>Method to update record in the table.</b><br/>
 
     ```Javascript
     Webbase.Storage.from(table_name).set(data).where(condition).update();
@@ -54,7 +54,7 @@ Basic operations that webbase support are <b>" insert, delete, update, select, s
     Webbase.Storage.from('student').set({ marks : 69 }).where('{id} == 5225 || {id} == 5222').update();
     ```
 
-* Method to select record from a table.<br/>
+* <b>Method to select record from a table.</b><br/>
     
     ```Javascript
     Webbase.Storage.select(fields).from(table_name).where(condition).find();
@@ -64,7 +64,7 @@ Basic operations that webbase support are <b>" insert, delete, update, select, s
     Webbase.Storage.select('name,marks').from('student').where('{id} == 5222').find();
     ```
 
-* Method to select record by joining Multiple table.<br/>
+* <b>Method to select record by joining Multiple table.</b><br/>
     
     ```Javascript
     Webbase.Storage.select(fields[student_fieldname]).join(tables).where(condition).find();
