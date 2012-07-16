@@ -6,12 +6,12 @@ tables in the storage method (localStorage) provided by the browser. its just li
 Basic operations that webbase support are <b>" insert, delete, update, select, select..where and join. "</b>
 
 * Method to create a table. table name and data is madatory,  primary key which is not mandatory.<br/><br/>
-	<b> Syntax </b>
- 	```Javascript
-	Webbase.Storage.create(table_name, data, primary_key);
-	```
+    <b> Syntax </b>
+    ```Javascript
+    Webbase.Storage.create(table_name, data, primary_key);
+    ```
 
-	<b> Example </b>
+    <b> Example </b>
     ```Javascript
     Webbase.Storage.create('student',{
         id : 'number',
@@ -21,12 +21,39 @@ Basic operations that webbase support are <b>" insert, delete, update, select, s
     ```
 
 
-* Method to insert data to the table. `Webbase.Storage.insert(table_name, data);`
+* Method to insert record to the table. `Webbase.Storage.insert(table_name, data);`
 
-	```Javascript
+    ```Javascript
     Webbase.Storage.insert('student',{
         id : 5225,
         name : "Jaison Justus",
         marks : 53
     });
+    ```
+
+* Method to delete record from the table. `Webbase.Storage.from(table_name).where(condition).delete();`
+
+    ```Javascript
+    Webbase.Storage.from('student').where('{id} == 5225').delete();
+    ```
+
+* Method to update record in the table. `Webbase.Storage.from(table_name).set(data).where(condition).update();`
+    
+
+    ```Javascript
+    Webbase.Storage.from('student').set({ marks : 69 }).where('{id} == 5225 || {id} == 5222').update();
+    ```
+
+* Method to select record from a table. `Webbase.Storage.select(fields).from(table_name).where(condition).find();`
+    
+
+    ```Javascript
+    Webbase.Storage.select('name,marks').from('student').where('{id} == 5222').find();
+    ```
+
+* Method to select record by joining Multiple table. `Webbase.Storage.select(fields[student_fieldname]).join(tables).where(condition).find();`
+    
+
+    ```Javascript
+    Webbase.Storage.select('student_name,student_marks,score_english').join('student.score').where('{id} == 5222').find();
     ```
