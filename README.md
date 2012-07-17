@@ -1,7 +1,7 @@
-Webbase.js
+Webbase.js 
 ==========
 
-Webbase.js is a data manager library for javascript web applications, which provide the concept of creating 
+Webbase.js <i> (not yet released) </i> is a data manager library for javascript web applications, which provide the concept of creating 
 tables in the storage method (localStorage) provided by the browser. its just like mimicing the database to the browser.
 Basic operations that webbase support are " insert, delete, update, select, select..where and join. "
 
