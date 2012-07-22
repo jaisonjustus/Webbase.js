@@ -1,4 +1,10 @@
 
+body	{
+	margin:0;
+	padding:0;
+	border:0;
+}
+
 fieldset, ol ,li	{
 	margin : 0;
 	padding : 0;
@@ -10,7 +16,8 @@ input[type=text]	{
 	height:27px;
 	border:0;
 	border-bottom:1px solid #ABABAB;
-	font: 14px "CandelaBook";
+	font: 14px "junctionregularRegular";
+	outline: none;
 }
 
 input[type=button]	{
@@ -18,14 +25,45 @@ input[type=button]	{
 	height:35px;
 	overflow: hidden;
 	border:0;
-	font:18px "CandelaBold";
+	font:18px "junctionregularRegular";
 	color:white;
 }
+
+#application-wrapper	{
+	width:100%;
+	height:auto;
+	overflow: hidden;
+}
+
+#form-control-wrapper	{
+	width:25%;
+	min-width:361px;
+	height:94%;
+	padding:2%;
+	float:left;
+}
+
+.inner-shadow	{
+	-moz-box-shadow:    inset 0px 0px 20px #171817;
+  	-webkit-box-shadow: inset 0px 0px 20px #171817;
+  	box-shadow:         inset 0px 0px 10px #171817;
+}
+
+#details-wrapper	{
+	width:67%;
+	height: 94%;
+	padding: 2%;
+	background-image: url(../images/bg-strip.jpeg);
+	background-repeat: repeat;
+	float:right;
+	min-width:500px;
+}
+
 
 #form-wrapper	{
 	width : 300px;
 	height : auto;
-	padding : 20px 20px 20px 20px;
+	padding : 20px 20px 10px 20px;
 	margin : 10px auto;
 	background-color: white;
 }
@@ -34,6 +72,12 @@ input[type=button]	{
 	-moz-box-shadow: 0px 0px 4px 1px #ABABAB;
   	-webkit-box-shadow: 0px 0px 4px 1px #ABABAB;
   	box-shadow: 0px 0px 4px 1px #ABABAB;
+}
+
+.drop-shadow-black	{
+	-moz-box-shadow: 0px 0px 4px 1px #171817;
+  	-webkit-box-shadow: 0px 0px 4px 1px #171817;
+  	box-shadow: 0px 0px 4px 1px #171817;
 }
 
 .border-radius	{
@@ -53,24 +97,37 @@ input[type=button]	{
 
 #personal-details li 	{
 	width:100%;
-	height:55px;
-	margin-bottom:10px;
+	height:auto;
+	margin-bottom:20px;
 }
 
 #personal-details label	{
 	margin-top:5px;
-	width:100px;
+	width:120px;
 	float:left;
-	font : 16px "CandelaBold"
+	font : 16px "junctionregularRegular"
 }
 #personal-details input[type=text]	{
 	width:300px;
 	float:right;
 }
 
+#personal-details textarea	{
+	width:300px;
+	height:100px;
+	float:right;
+	border: 0;
+	border-bottom: 1px solid #ABABAB;
+	outline: none;
+	font:12px "junctionregularRegular";
+	line-height: 19px;
+	margin-bottom:20px;
+	resize: none;
+}
 
 
-#experience-details ol	{
+
+#experience-details 	{
 	width:100%;
 	height:auto;
 	padding-top:20px;
@@ -90,14 +147,12 @@ input[type=button]	{
 
 #experience-details input[type=text]	{
 	width:57px;
-	border:1px solid #ABABAB;
+	border-bottom:1px solid #ABABAB;
 	margin-top:5px;
 	text-align: center;
-	font-size: 12px;
+	font-size: 14px;
 	float:left;
 }
-
-
 
 #stats-details ol	{
 	width:100%;
@@ -107,9 +162,19 @@ input[type=button]	{
 }
 
 #personal-details #stats-details li	{
-	width:150px;
-	height:60px;
+	width:100px;
+	height:40px;
 	float:left;
+	text-align: center;
+}
+
+#stats-details h1	{
+	font:16px "junctionregularRegular";
+}
+
+#stats-details #points	{
+	text-align: right;
+	font: 30px "junctionregularRegular";
 }
 
 #stats-details label	{
@@ -122,6 +187,60 @@ input[type=button]	{
 	border:1px solid #ABABAB;
 	margin-top:5px;
 	text-align: center;
-	font-size: 12px;
+	font-size: 14px;
 	float:left;
+}
+
+.details-card	{
+	width:250px;
+	height:auto;
+	padding:40px 10px 10px 40px;
+	margin: 10px 10px 10px 10px;
+	background-color: white;
+	float: left;
+}
+
+.details-card h1	{
+	font:22px "junctionregularRegular";
+	margin: 0;
+	padding: 0;
+}
+
+.desc 	{
+	font:12px "junctionregularRegular";
+	line-height: 19px;
+	margin: 0;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+.details-card h2 	{
+	font:14px "junctionregularRegular";
+	margin: 0;
+	margin-top: 5px;
+	margin-bottom: 20px;
+}
+
+.details-card .experinece-point	{
+	width:46%;
+	height:50px;
+	float: left;
+	text-align: right;
+	font: 16px "Arial";
+	padding: 2%;
+}
+
+.details-card .exp-points	{
+	width:21%;
+	height:50px;
+	float: left;
+	font: 31px "Arial";
+	padding: 2%;
+}
+
+.details-card .status	{
+	width: 20%;
+	height: 50px;
+	float: left;
+	padding: 2% 2% 2% 3%;
 }

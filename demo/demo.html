@@ -1,66 +1,137 @@
 <html>
 	<head>
 		<title> Webbase.js </title>
-		<link rel="stylesheet" type="text/css" href="media/fonts/Candela-fontfacekit/Candela-fontfacekit.css" />
+		<link rel="stylesheet" type="text/css" href="media/fonts/junction/junction.css" />
 		<link rel="stylesheet" type="text/css" href="media/styles/index.css" />
 	</head>
 	<body>
-		<div id="form-wrapper" class="drop-shadow">
-			<fieldset>
-				<ol id="personal-details">
-					<li>
-						<label for="name">Name</label>
-						<input type="text" id="name" name="name"/>
-					</li>
-					<li>
-						<label for="name">Candidate No</label>
-						<input type="text" id="candno" name="candno" />
-					</li>
-					<li>
-						<label for="name">Designation</label>
-						<input type="text" id="totalmark" name="totalmark"/>
-					</li>
-					<li>
-						<ol id="experience-details">
+		<div id="application-wrapper">
+			<div id="form-control-wrapper">
+				<div id="form-wrapper" class="drop-shadow">
+					<fieldset>
+						<ol id="personal-details">
 							<li>
-								<label for="name">JS</label>
-								<input type="text" id="js" name="js"/>
+								<label for="name">Name</label>
+								<input type="text" id="name" name="name"/>
 							</li>
 							<li>
-								<label for="name">NODE</label>
-								<input type="text" id="node" name="node"/>
+								<label for="name">Candidate No</label>
+								<input type="text" id="candno" name="candno" />
 							</li>
 							<li>
-								<label for="name">PHP</label>
-								<input type="text" id="php" name="php"/>
+								<label for="name">Designation</label>
+								<input type="text" id="totalmark" name="totalmark"/>
 							</li>
 							<li>
-								<label for="name">Ruby</label>
-								<input type="text" id="ruby" name="ruby"/>
+								<ol id="experience-details">
+									<li>
+										<label for="name">JS</label>
+										<input type="text" id="js" name="js"/>
+									</li>
+									<li>
+										<label for="name">NODE</label>
+										<input type="text" id="node" name="node"/>
+									</li>
+									<li>
+										<label for="name">PHP</label>
+										<input type="text" id="php" name="php"/>
+									</li>
+									<li>
+										<label for="name">Ruby</label>
+										<input type="text" id="ruby" name="ruby"/>
+									</li>
+									<li>
+										<label for="name">Python</label>
+										<input type="text" id="python" name="python"/>
+									</li>
+								</ol>
 							</li>
 							<li>
-								<label for="name">Python</label>
-								<input type="text" id="python" name="python"/>
+								<label for="name">Description</label>
+								<textarea id="desc" name="desc"></textarea>
+							</li>
+							<li>
+								<ol id="stats-details">
+									<li>
+										<h1 style="text-align:right;">Total Experience%</h1>
+									</li>
+									<li>
+										<div id="points">75%</div>
+									</li>
+									<li>
+										<img src="media/images/okay.png" width="40" height="40" alt=""/>
+									</li>
+								</ol>
+							</li>
+							<li>
+								<input type="button" id="save-details" name="save-details" class="linear-gradient-1 drop-shadow border-radius" value="Save Details"/>
 							</li>
 						</ol>
-					</li>
-					<li>
-						<ol id="stats-details">
-							<li>
-								<label for="name">JS</label>
-								<input type="text" id="js" name="js"/>
-							</li>
-							<li>
-								<label for="name">NODE</label>
-								<input type="text" id="node" name="node"/>
-							</li>
-						</ol>
-					</li>
-					<li>
-						<input type="button" id="save-details" name="save-details" class="linear-gradient-1 drop-shadow border-radius" value="Save Details"/>
-					</li>
-				</ol>
-			</fieldset>
+					</fieldset>
+				</div>
+			</div>
+
+			<div id="details-wrapper" class="inner-shadow">
+				<div class="details-card drop-shadow-black">
+					<h1>Jaison Justus</h1>
+					<h2>Front-End Engineer - 5225</h2>
+					<p class="desc">
+						Icing drag tootsie roll cookie icing muffin toffee. Powder jelly sweet roll faworki lemon drops gingerbread sesame snaps caramels topping. Cookie tiramisu marshmallow chocolate cake sweet roll ice cream sugar plum soufflé. 
+					</p>
+					<div class="experinece-point">Total Experience%</div>
+					<div class="exp-points">
+						75%
+					</div>
+					<div class="status">
+						<img src="media/images/okay.png" width="34" height="34" alt=""/>
+					</div>
+				</div>
+
+				<div class="details-card drop-shadow-black">
+					<h1>Jaison Justus</h1>
+					<h2>Front-End Engineer - 5225</h2>
+					<p class="desc">
+						Icing drag tootsie roll cookie icing muffin toffee. Powder jelly sweet roll faworki lemon drops gingerbread sesame snaps caramels topping. Cookie tiramisu marshmallow chocolate cake sweet roll ice cream sugar plum soufflé. Jelly-o cotton candy donut. Candy sesame snaps applicake cake lemon drops pastry muffin fruitcake topping. Caramels bear claw cookie sugar plum muffin macaroon cheesecake. Wafer 
+					</p>
+					<div class="experinece-point">Total Experience%</div>
+					<div class="exp-points">
+						75%
+					</div>
+					<div class="status">
+						<img src="media/images/not-okay.png" width="34" height="34" alt=""/>
+					</div>
+				</div>
+
+				<div class="details-card drop-shadow-black">
+					<h1>Jaison Justus</h1>
+					<h2>Front-End Engineer - 5225</h2>
+					<p class="desc">
+						Icing drag tootsie roll cookie icing muffin toffee. Powder jelly sweet roll faworki lemon drops gingerbread sesame snaps caramels topping. Cookie tiramisu marshmallow chocolate cake sweet roll ice cream sugar plum soufflé. Jelly-o cotton candy donut. Candy sesame snaps applicake cake lemon drops pastry muffin fruitcake topping. Caramels bear claw cookie sugar plum muffin macaroon cheesecake. Wafer 
+					</p>
+					<div class="experinece-point">Total Experience%</div>
+					<div class="exp-points">
+						75%
+					</div>
+					<div class="status">
+						<img src="media/images/okay.png" width="34" height="34" alt=""/>
+					</div>
+				</div>
+
+				<div class="details-card drop-shadow-black">
+					<h1>Jaison Justus</h1>
+					<h2>Front-End Engineer - 5225</h2>
+					<p class="desc">
+						Icing drag tootsie roll cookie icing muffin toffee. Powder jelly sweet roll faworki lemon drops gingerbread sesame snaps caramels topping. Cookie tiramisu marshmallow chocolate cake sweet roll ice cream sugar plum soufflé. Jelly-o cotton candy donut. Candy sesame snaps applicake cake lemon drops pastry muffin fruitcake topping. Caramels bear claw cookie sugar plum muffin macaroon cheesecake. Wafer 
+					</p>
+					<div class="experinece-point">Total Experience%</div>
+					<div class="exp-points">
+						75%
+					</div>
+					<div class="status">
+						<img src="media/images/okay.png" width="34" height="34" alt=""/>
+					</div>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

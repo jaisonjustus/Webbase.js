@@ -213,7 +213,7 @@
 				extra : 103
 			});
             
-            //console.log(Webbase.Storage.select('*').from('student').find());
+            console.log(Webbase.Storage.select('name').from('student').where('{id} == 5222 || {id} == 5225').find());
             //Webbase.Storage.from('student').where("{id} == 5225").delete();
             //Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
             //console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
