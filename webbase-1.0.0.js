@@ -43,7 +43,7 @@ var Exception = Webbase.Exception = (function()    {
 		 * @return : string;
 		 */
 		this.message = function()	{
-			return this.error[code];
+			return code + ":" + this.error[code];
 		};
 	};
 	
@@ -571,7 +571,7 @@ var DataManager = Webbase.DataManager = (function()	{
 
         for(var i = 0; i < data.length; i++)    {
             tuple = data[i];
-            //console.log(data, tuple, condition, eval(condition));
+            
             if(eval(condition)) {
                 subTuple = {};
                 selectArray = Webbase.CriteriaStruct.select;
@@ -841,7 +841,6 @@ var DataManager = Webbase.DataManager = (function()	{
 	            }
             }    
         }catch(error)   {
-        	console.log(error);
             WebbaseUtility.Log.show(error.message());
         }finally	{
         	return result;
