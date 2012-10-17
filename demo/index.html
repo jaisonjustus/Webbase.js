@@ -40,6 +40,7 @@
 
 			// Adding values for Jaison;
 			Webbase.Storage.insert('student',{ id : 5225, name : "Jaison", marks : 53 });
+			Webbase.Storage.insert('student',{ id : 5225, name : "hello", marks : 53 })
 			Webbase.Storage.insert('marks',{ id: 5225, english : 40, maths : 30	});
             Webbase.Storage.insert('extra',{id: 5225, credit : 103 });
             Webbase.Storage.insert('tbl_contact',{ id : 5225, number : 9495005949 });
@@ -58,12 +59,13 @@
 			
 
             // Webbase processing....;
-            Webbase.Storage.from('student').where("{id} == 5225").delete();
-            Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
-            console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
-			console.log(Webbase.Storage.select('*').from('student').find());
-            console.log(Webbase.Storage.select('name,marks,marks_english,marks_maths,extra_credit,tbl_contact_number').join('student.marks.extra.tbl_contact').where('{marks} > 40 && {marks} < 60').find());
-            console.log(Webbase.Storage.select('*').from('marks').find());
+   //          console.log(Webbase.Storage.select('*').from('student').find());
+   //          Webbase.Storage.from('student').where("{id} == 5225").delete();
+   //          Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
+   //          console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
+			// console.log(Webbase.Storage.select('*').from('student').find());
+            console.log('join > ',Webbase.Storage.select('name,marks,marks_english,marks_maths,extra_credit,tbl_contact_number').join('student.marks.extra.tbl_contact').where('{marks} > 20 && {marks} < 60').find());
+            // console.log(Webbase.Storage.select('*').from('marks').find());
 		</script>
 	</body>
 </html>
