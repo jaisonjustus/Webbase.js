@@ -561,7 +561,11 @@ var DataManager = Webbase.DataManager = (function()	{
     Private.find = function(data)   {
         var condition = Webbase.CriteriaStruct.where, tuple, resultData = [], subTuple = {}, selectArray, fields = [];
 
-        fields = this.createMergedTableDesc();
+        if(Webbase.CriteriaStruct.join != '')	{
+        	fields = this.createMergedTableDesc();
+    	}else	{
+    		fields = this.checkTableAlreadyExists(Webbase.CriteriaStruct.from).field;
+    	}
 
         if(condition.length > 0)	{
         	condition = this.parseAndPrepareCondition(condition, fields);
@@ -832,6 +836,7 @@ var DataManager = Webbase.DataManager = (function()	{
 	                }
 	                
 	                var tableData = Private.getTableData(Webbase.CriteriaStruct.from);
+
 	                result = Private.find(tableData);
 	                
 	                Private.resetCriteriaStruct();
