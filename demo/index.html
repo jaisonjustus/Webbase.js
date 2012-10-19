@@ -63,13 +63,18 @@
 			
 
             // Webbase processing....;
-   //          console.log(Webbase.Storage.select('*').from('student').find());
-   //          Webbase.Storage.from('student').where("{id} == 5225").delete();
-   //          Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
-   //          console.log(Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
-			// console.log(Webbase.Storage.select('*').from('student').find());
-            console.log('join > ',Webbase.Storage.select('name,marks,marks_english,marks_maths,extra_credit,tbl_contact_number').join('student.marks.extra.tbl_contact').where('{marks} > 20 && {marks} < 60').find());
-            // console.log(Webbase.Storage.select('*').from('marks').find());
+            console.log("select * from student : ",Webbase.Storage.select('*').from('student').find());
+            
+            console.log("delete from student where id = 5225");
+            Webbase.Storage.from('student').where("{id} == 5225").delete();
+
+            console.log("update set marks = 100 where id = 5222");
+            Webbase.Storage.from('student').set({marks : 100}).where('{id} == 5222 || {id} == 5225').update();
+
+            console.log("select name,marks from student where marks > 40 and mark < 60 and id >= 5225 : ",Webbase.Storage.select('name,marks').from('student').where('{marks} > 40 && {marks} < 60 && {id} >= 5225').find());
+			
+            console.log('Join function ',Webbase.Storage.select('name,marks,marks_english,marks_maths,extra_credit,tbl_contact_number').join('student.marks.extra.tbl_contact').where('{marks} > 20 && {marks} < 60').find());
+
 		</script>
 	</body>
 </html>
