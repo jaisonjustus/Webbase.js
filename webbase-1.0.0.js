@@ -12,7 +12,8 @@ var Webbase = {
     Version : '1.0.0',
     Browser : window,
     StorageMode : '',
-    debug : false
+    debug : false,
+    DataTypes : ['number','string','float']
 };
 
 /**
@@ -34,6 +35,7 @@ var Exception = Webbase.Exception = (function()    {
             STR04 : "INCORRECT FIELD NAME OR DATA TYPE.",
             STR05 : "PRIMARY KEY FIELD NOT FOUND IN THE TABLE DECRIPTION",
             STR06 : "PRIMARY KEY VIOLATION : DUPLICATE DATA FOUND",
+            STR07 : "UNDEFINED DATATYPE FOUND",
             CRT01 : "TABLE NOT SELECTED!!"
 		};
 		
@@ -160,6 +162,35 @@ var Sort = WebbaseUtility.Sort = (function()	{
 	return new Sort();
 })();
 
+var ArrayUtl = WebbaseUtility.ArrayUtl = (function() {
+    var ArrayUtl = function()   {};
+
+    ArrayUtl.prototype.Search = function(source, node)  {
+        var sourceLength, found;
+
+        found = false;
+        sourceLength = source.length;
+
+        for(var i = 0; i < sourceLength; i++)   {
+            if(source[i] == node)   {
+                found = true;
+                break;
+            }
+        }
+
+        return found;
+    };
+
+    return new ArrayUtl();
+})();
+
+/**
+ * This method helpd to log the errors and notifications in web console. this method only 
+ * logs if the debugging mode is active. also toggle logging functioncality between console.log
+ * and alert if console is not found on browsers.
+ * @access : public;
+ * @method : log;
+ */
 var Log = WebbaseUtility.Log = (function()	{
 	var Log = function()	{
 		
@@ -308,6 +339,19 @@ var DataManager = Webbase.DataManager = (function()	{
 			throw new Webbase.Exception('STR01');
 		}
 	};
+
+    Private.dataTypeCheck = function(desc)  {
+        var status = true;
+
+        for(var fields in desc) {
+            if(!WebbaseUtility.ArrayUtl.Search(Webbase.DataTypes,desc[fields])) {
+                status = false;
+                break;
+            }
+        }
+
+        return status;
+    };
 	
 	/**
 	 * Method to save tables details in the storage for future use;
@@ -316,12 +360,17 @@ var DataManager = Webbase.DataManager = (function()	{
 	 */
 	Private.setTableDetails = function(tableName, desc, primaryKey)	{
 		if(desc.hasOwnProperty(primaryKey) || primaryKey == '')	{
-			Webbase.TableDesc.push({
-				name : tableName,
-				field : desc,
-				primaryKey : primaryKey
-			});
-			Webbase.StorageMode.setItem('Webbase_tbl', WebbaseUtility.JSON.stringify(Webbase.TableDesc));
+            if(this.dataTypeCheck(desc))    {
+    			Webbase.TableDesc.push({
+    				name : tableName,
+    				field : desc,
+    				primaryKey : primaryKey
+    			});
+
+                Webbase.StorageMode.setItem('Webbase_tbl', WebbaseUtility.JSON.stringify(Webbase.TableDesc));
+            }else   {
+                throw new Webbase.Exception('STR07');
+            }
 		}else	{
 			throw new Webbase.Exception('STR05');
 		}
