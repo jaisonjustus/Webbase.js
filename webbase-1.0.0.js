@@ -430,11 +430,18 @@ var DataManager = Webbase.DataManager = (function()	{
      * @access : private;
      * @param : string tableName;
      * @param : object data;
+     * @return: boolean;
      */
     Private.insertData = function(tableName, data)  {
         var tableData = Private.getTableData(tableName);
         tableData.push(data);
-        Webbase.StorageMode.setItem('Webbase_' + tableName, WebbaseUtility.JSON.stringify(tableData));
+        try {
+        	Webbase.StorageMode.setItem('Webbase_' + tableName, WebbaseUtility.JSON.stringify(tableData));
+        	return true;
+        } catch(err) {
+        	WebbaseUtility.Log.show(err.message());
+        	return false;
+        }
     };
 
     Private.primaryKeyMatch = function(tableName, primaryKey, data)	{
